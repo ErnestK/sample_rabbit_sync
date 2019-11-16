@@ -1,10 +1,12 @@
 package events
 
 type event struct {
-	Source    string
-	Component string
-	Resource  string
-	Crit      int
-	Message   string
-	Timestamp int32
+	component  string
+	resource   string
+	crit       int
+	last_msg   string
+	first_msg  string
+	start_time int
+	last_time  int
+	status     string
 }
