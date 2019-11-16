@@ -8,8 +8,10 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	_ "go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	_ "go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var SYNC_TIMEOUT = 1000 * time.Millisecond
@@ -20,7 +22,7 @@ func SyncBuffer(mongoClient *mongo.Client, wg *sync.WaitGroup, done <-chan bool)
 	logCollection := mongoClient.Database("test").Collection("test_technique_log")
 
 	for {
-		// currentTms := time.Now().UnixNano()
+		currentTms := time.Now().UnixNano()
 
 		select {
 		case <-done:
@@ -31,18 +33,19 @@ func SyncBuffer(mongoClient *mongo.Client, wg *sync.WaitGroup, done <-chan bool)
 			log.Print("Tick at sync", t)
 			// start
 
-			// specify a pipeline that will return the number of times each name appears in the collection
-			// specify the MaxTime option to limit the amount of time the operation can run on the server
-			groupBy := bson.D{
-				{"$group", bson.D{
+			pipe := mongo.Pipeline{
+				{{"$match", bson.D{{"synchronized", false}}}},
+				{{"$match", bson.D{{"createdat", bson.D{{"$lte", currentTms}}}}}},
+				{{"$group", bson.D{
 					{"_id", bson.E{"$mqeventlog.component", "$mqeventlog.resource"}},
 					{"maxTimestamp", bson.D{
 						{"$max", "$mqeventlog.timestamp"},
 					}},
-				}},
+				}}},
 			}
+
 			opts := options.Aggregate().SetMaxTime(2 * time.Second)
-			cursor, err := logCollection.Aggregate(context.TODO(), mongo.Pipeline{groupBy}, opts)
+			cursor, err := logCollection.Aggregate(context.TODO(), pipe, opts)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -50,6 +53,7 @@ func SyncBuffer(mongoClient *mongo.Client, wg *sync.WaitGroup, done <-chan bool)
 			// get a list of all returned documents and print them out
 			// see the mongo.Cursor documentation for more examples of using cursors
 			var results []bson.M
+
 			if err = cursor.All(context.TODO(), &results); err != nil {
 				log.Fatal(err)
 			}
