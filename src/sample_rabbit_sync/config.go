@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/streadway/amqp"
-	_ "go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -99,4 +98,16 @@ func getMongoDBConnection() *mongo.Client {
 	log.Print("Connected to MongoDB!")
 
 	return client
+}
+
+func (config *Config) closeAllConnection() {
+	config.RabbitMQConnection.Close()
+	log.Print("Connection to RabbitMQ closed.")
+
+	err := config.MongoDBConnection.Disconnect(context.TODO())
+
+	if err != nil {
+		panic(err)
+	}
+	log.Print("Connection to MongoDB closed.")
 }
