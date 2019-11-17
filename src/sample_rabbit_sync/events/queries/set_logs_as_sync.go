@@ -1,17 +1,25 @@
 package queries
 
 import (
+	"context"
 	"log"
 
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func SetLogsAsSync(logCollection *mongo.Collection, lastUnprocessedLogs []LastUnprocessedLog, currentTms int64) {
-	log.Print("\n in UpdateEventTable func")
-	// updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
-	// if err != nil {
-	//     log.Fatal(err)
-	// }
-	//
-	// fmt.Printf("Matched %v documents and updated %v documents.\n", updateResult.MatchedCount, updateResult.ModifiedCount)
+func SetLogAsSync(logCollection *mongo.Collection, logId primitive.ObjectID) {
+	filter := bson.D{{"_id", logId}}
+	update := bson.D{{"$set", bson.D{{"synchronized", true}}}}
+
+	result, err := logCollection.UpdateMany(context.TODO(), filter, update)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if result.MatchedCount != 0 {
+		log.Print("matched and replaced an existing document: ", result.MatchedCount)
+		return
+	}
 }

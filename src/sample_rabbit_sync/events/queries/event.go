@@ -1,5 +1,9 @@
 package queries
 
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
 type EventStatus string
 
 const (
@@ -16,4 +20,10 @@ type Event struct {
 	Start_time int32
 	Last_time  int32
 	Status     EventStatus
+}
+
+type eventDb struct {
+	ID     primitive.ObjectID
+	Crit   int32
+	Status string
 }

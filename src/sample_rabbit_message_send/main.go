@@ -85,3 +85,29 @@ func main() {
 		panic("error binding to the queue: " + err.Error())
 	}
 }
+
+func selectAll() {
+	// TODO: select all for debug
+	cursor, err := logCollection.Find(context.TODO(), bson.D{})
+	if err != nil {
+		fmt.Println("Finding all documents ERROR:", err)
+		defer cursor.Close(context.TODO())
+
+		// If the API call was a success
+	} else {
+		for cursor.Next(context.TODO()) {
+			var result bson.M
+			err := cursor.Decode(&result)
+
+			// If there is a cursor.Decode error
+			if err != nil {
+				fmt.Println("cursor.Next() error:", err)
+
+				// If there are no cursor.Decode errors
+			} else {
+				fmt.Println("\nresult type:", reflect.TypeOf(result))
+				fmt.Println("result:", result)
+			}
+		}
+	}
+}

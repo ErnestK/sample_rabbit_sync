@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -19,10 +20,5 @@ func GetEventIfExists(component string, resource string, eventCollection *mongo.
 			log.Fatal(err)
 		}
 	}
-	return true, eventDb{Crit: fullEventMessage["crit"].(int32), Status: fullEventMessage["status"].(string)}
-}
-
-type eventDb struct {
-	Crit   int32
-	Status string
+	return true, eventDb{ID: fullEventMessage["_id"].(primitive.ObjectID), Crit: fullEventMessage["crit"].(int32), Status: fullEventMessage["status"].(string)}
 }
