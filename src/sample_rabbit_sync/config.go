@@ -10,12 +10,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Config which holds connection for mongo and for rabbit
 type Config struct {
 	RabbitMQConnection *amqp.Connection
 	EventChannel       <-chan amqp.Delivery
 	MongoDBConnection  *mongo.Client
 }
 
+// GetConfig return config for main
 func GetConfig() *Config {
 	connection, eventChan := getRabbitMQConfigs()
 	return &Config{connection, eventChan, getMongoDBConnection()}

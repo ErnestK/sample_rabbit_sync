@@ -12,6 +12,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// GetLastUnprocessedRows get all unprocessed(synchronzied = false) rows for handle.
+// also use current < Timestmap
 // we can update and insert right in that method and this would be faster, but less readeable
 func GetLastUnprocessedRows(logCollection *mongo.Collection, currentTms int64) []LastUnprocessedLog {
 	// TODO: limit here maybe, depends of data
@@ -57,6 +59,7 @@ func GetLastUnprocessedRows(logCollection *mongo.Collection, currentTms int64) [
 	return lastUnprocessedLogsArr
 }
 
+// LastUnprocessedLog just struct for keeping data
 type LastUnprocessedLog struct {
 	Component    string
 	Resource     string

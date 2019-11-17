@@ -4,13 +4,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type EventStatus string
+type eventStatus string
 
+// its enum for event status
 const (
-	ONGOING  EventStatus = "ONGOING"
-	RESOLVED EventStatus = "RESOLVED"
+	ONGOING  eventStatus = "ONGOING"
+	RESOLVED eventStatus = "RESOLVED"
 )
 
+// Event data from test_technique
 type Event struct {
 	Component  string
 	Resource   string
@@ -19,7 +21,7 @@ type Event struct {
 	First_msg  string
 	Start_time int32
 	Last_time  int32
-	Status     EventStatus
+	Status     eventStatus
 }
 
 type eventDb struct {

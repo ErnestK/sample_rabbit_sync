@@ -13,6 +13,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// AddToBuffer insert new data row from rabbit, into table test_technique_log.
+// Since we insert only we dont have blocking/duplicates on db, and can use it in goroutines
+// Later other functions handles data from that table and update/insert in final table
 func AddToBuffer(mongoClient *mongo.Client, msg amqp.Delivery, wg *sync.WaitGroup) {
 	defer wg.Done()
 	log.Print("message received: " + string(msg.Body))

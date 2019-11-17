@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// UpdateEventTable updated data
 func UpdateEventTable(eventCollection *mongo.Collection, row eventDb, fullLogMessage primitive.M) {
 	log.Print("\n in UpdateEventTable func")
 	newCrit := fullLogMessage["crit"].(int32)

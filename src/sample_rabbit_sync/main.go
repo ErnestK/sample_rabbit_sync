@@ -11,7 +11,7 @@ import (
 )
 
 // we can configure it and set to 0 if dont want any delay( but we can ddos db in that case)
-var READ_TIMEOUT = 500 * time.Millisecond
+var readTimeout = 500 * time.Millisecond
 
 func main() {
 	var wgAddToBuffer sync.WaitGroup
@@ -19,7 +19,7 @@ func main() {
 
 	config := GetConfig()
 
-	ticker := time.NewTicker(READ_TIMEOUT)
+	ticker := time.NewTicker(readTimeout)
 	done := make(chan bool)
 	exit := make(chan bool)
 	sigs := make(chan os.Signal, 1)

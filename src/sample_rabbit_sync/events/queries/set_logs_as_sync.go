@@ -9,6 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// SetLogAsSync set logs as processed.
+// TODO: I should use updateMany
 func SetLogAsSync(logCollection *mongo.Collection, logId primitive.ObjectID) {
 	filter := bson.D{{"_id", logId}}
 	update := bson.D{{"$set", bson.D{{"synchronized", true}}}}

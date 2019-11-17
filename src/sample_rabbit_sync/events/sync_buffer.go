@@ -12,10 +12,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var SYNC_TIMEOUT = 1000 * time.Millisecond
+var syncTimeout = 1000 * time.Millisecond
 
+// SyncBuffer read from test_technique_log all files aggregate them and use only last.
+// func works in one goroutine
 func SyncBuffer(mongoClient *mongo.Client, wg *sync.WaitGroup, done <-chan bool) {
-	ticker := time.NewTicker(SYNC_TIMEOUT)
+	ticker := time.NewTicker(syncTimeout)
 	logCollection := mongoClient.Database("test").Collection("test_technique_log")
 
 	for {
