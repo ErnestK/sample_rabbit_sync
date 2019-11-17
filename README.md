@@ -9,4 +9,4 @@ dirty file, used as template need for sending message.
 2) Run mongoDB in container         
 `docker run -d -it -p 27017:27017 mongo`              
 
-3) run main from bin `bin/main`
+3) run main from bin `bin/main` or `go run main.go config.go`
