@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"sample_rabbit_sync/events/queries"
 	"sync"
 	"time"
 
@@ -21,7 +22,7 @@ func AddToBuffer(mongoClient *mongo.Client, msg amqp.Delivery, wg *sync.WaitGrou
 		log.Fatal("error during deserialize message: " + string(msg.Body))
 	}
 	// using composite key because groupong by two column and after tring to decode data is hell
-	eventLog := eventLog{
+	eventLog := queries.EventLog{
 		Source:            mqEventLog.Source,
 		Component:         mqEventLog.Component,
 		Resource:          mqEventLog.Resource,
@@ -30,7 +31,7 @@ func AddToBuffer(mongoClient *mongo.Client, msg amqp.Delivery, wg *sync.WaitGrou
 		Timestamp:         mqEventLog.Timestamp,
 		Synchronized:      false,
 		CreatedAt:         time.Now().UnixNano(),
-		CompositeGroupKey: mqEventLog.Component + delimiter + mqEventLog.Resource,
+		CompositeGroupKey: mqEventLog.Component + queries.Delimiter + mqEventLog.Resource,
 	}
 
 	collection := mongoClient.Database("test").Collection("test_technique_log")

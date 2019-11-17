@@ -10,6 +10,20 @@ import (
 
 func UpdateEventTable(eventCollection *mongo.Collection, row eventDb, fullLogMessage primitive.M) {
 	log.Print("\n in UpdateEventTable func")
+	// filter := bson.D{{"name", "Ash"}}
+	//
+	// update := bson.D{
+	// 	{"$inc", bson.D{
+	// 		{"age", 1},
+	// 	}},
+	// }
+
+	// updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
+	// if err != nil {
+	//     log.Fatal(err)
+	// }
+	//
+	// fmt.Printf("Matched %v documents and updated %v documents.\n", updateResult.MatchedCount, updateResult.ModifiedCount)
 }
 
 // If it has the attribute crit > 0 :

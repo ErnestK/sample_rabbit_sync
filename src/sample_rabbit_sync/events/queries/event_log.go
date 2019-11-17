@@ -1,17 +1,8 @@
-package events
+package queries
 
-var delimiter = "-!-"
+var Delimiter = "-!-"
 
-type mqEventLog struct {
-	Source    string
-	Component string
-	Resource  string
-	Crit      int
-	Message   string
-	Timestamp int32
-}
-
-type eventLog struct {
+type EventLog struct {
 	Source            string
 	Component         string
 	Resource          string

@@ -77,15 +77,15 @@ func syncWithMainTable(mongoClient *mongo.Client, lastUnprocessedLogs []queries.
 		if isExists {
 			queries.UpdateEventTable(eventCollection, row, fullLogMessage)
 		} else {
-			event := event{
-				component:  fullLogMessage["component"].(string),
-				resource:   fullLogMessage["resource"].(string),
-				crit:       fullLogMessage["crit"].(int32),
-				last_msg:   fullLogMessage["message"].(string),
-				first_msg:  fullLogMessage["message"].(string),
-				start_time: fullLogMessage["timestamp"].(int32),
-				last_time:  fullLogMessage["timestamp"].(int32),
-				status:     ONGOING,
+			event := queries.Event{
+				Component:  fullLogMessage["component"].(string),
+				Resource:   fullLogMessage["resource"].(string),
+				Crit:       fullLogMessage["crit"].(int32),
+				Last_msg:   fullLogMessage["message"].(string),
+				First_msg:  fullLogMessage["message"].(string),
+				Start_time: fullLogMessage["timestamp"].(int32),
+				Last_time:  fullLogMessage["timestamp"].(int32),
+				Status:     queries.ONGOING,
 			}
 
 			insertResult, err := eventCollection.InsertOne(context.TODO(), event)
@@ -96,6 +96,6 @@ func syncWithMainTable(mongoClient *mongo.Client, lastUnprocessedLogs []queries.
 				log.Print("\nInserted a single document in test_technique table: ", insertResult.InsertedID)
 			}
 		}
-		queries.SetLogsAsSync(logCollection, lastUnprocessedLogs, currentTms)
 	}
+	queries.SetLogsAsSync(logCollection, lastUnprocessedLogs, currentTms)
 }

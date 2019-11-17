@@ -14,7 +14,6 @@ import (
 
 // we can update and insert right in that method and this would be faster, but less readeable
 func GetLastUnprocessedRows(logCollection *mongo.Collection, currentTms int64) []LastUnprocessedLog {
-	delimiter := "-!-"
 	// TODO: limit here maybe, depends of data
 	pipe := mongo.Pipeline{
 		{{"$match", bson.D{{"synchronized", false}}}},
@@ -44,7 +43,7 @@ func GetLastUnprocessedRows(logCollection *mongo.Collection, currentTms int64) [
 			log.Print("nil in result")
 		} else {
 			maxTimestamp := result["maxTimestamp"].(int32)
-			compositeKeys := strings.Split(result["_id"].(string), delimiter)
+			compositeKeys := strings.Split(result["_id"].(string), Delimiter)
 			if len(compositeKeys) != 2 {
 				log.Fatal("function to create composite key is broken, all bad!")
 			}

@@ -19,10 +19,10 @@ func GetEventIfExists(component string, resource string, eventCollection *mongo.
 			log.Fatal(err)
 		}
 	}
-	return true, eventDb{Crit: fullEventMessage["crit"].(int), Status: fullEventMessage["status"].(string)}
+	return true, eventDb{Crit: fullEventMessage["crit"].(int32), Status: fullEventMessage["status"].(string)}
 }
 
 type eventDb struct {
-	Crit   int
+	Crit   int32
 	Status string
 }
