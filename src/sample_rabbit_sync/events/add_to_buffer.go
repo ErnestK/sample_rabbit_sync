@@ -4,17 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
-	"os"
-	"reflect"
 	"sync"
 	"time"
 
 	"github.com/streadway/amqp"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	_ "go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func AddToBuffer(mongoClient *mongo.Client, msg amqp.Delivery, wg *sync.WaitGroup) {
@@ -25,7 +20,18 @@ func AddToBuffer(mongoClient *mongo.Client, msg amqp.Delivery, wg *sync.WaitGrou
 	if err != nil {
 		log.Fatal("error during deserialize message: " + string(msg.Body))
 	}
-	eventLog := eventLog{MqEventLog: mqEventLog, Synchronized: false, CreatedAt: time.Now().UnixNano()}
+	// using composite key because groupong by two column and after tring to decode data is hell
+	eventLog := eventLog{
+		Source:            mqEventLog.Source,
+		Component:         mqEventLog.Component,
+		Resource:          mqEventLog.Resource,
+		Crit:              mqEventLog.Crit,
+		Message:           mqEventLog.Message,
+		Timestamp:         mqEventLog.Timestamp,
+		Synchronized:      false,
+		CreatedAt:         time.Now().UnixNano(),
+		CompositeGroupKey: mqEventLog.Component + delimiter + mqEventLog.Resource,
+	}
 
 	collection := mongoClient.Database("test").Collection("test_technique_log")
 	insertResult, err := collection.InsertOne(context.TODO(), eventLog)
@@ -34,31 +40,6 @@ func AddToBuffer(mongoClient *mongo.Client, msg amqp.Delivery, wg *sync.WaitGrou
 		log.Fatal(err)
 	} else {
 		log.Print("Inserted a single document: ", insertResult.InsertedID)
-	}
-
-	// TODO: select all for debug
-	cursor, err := collection.Find(context.TODO(), bson.D{})
-	if err != nil {
-		fmt.Println("Finding all documents ERROR:", err)
-		defer cursor.Close(context.TODO())
-
-		// If the API call was a success
-	} else {
-		for cursor.Next(context.TODO()) {
-			var result bson.M
-			err := cursor.Decode(&result)
-
-			// If there is a cursor.Decode error
-			if err != nil {
-				fmt.Println("cursor.Next() error:", err)
-				os.Exit(1)
-
-				// If there are no cursor.Decode errors
-			} else {
-				fmt.Println("\nresult type:", reflect.TypeOf(result))
-				fmt.Println("result:", result)
-			}
-		}
 	}
 
 	msg.Ack(true)

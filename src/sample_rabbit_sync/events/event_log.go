@@ -1,5 +1,7 @@
 package events
 
+var delimiter = "-!-"
+
 type mqEventLog struct {
 	Source    string
 	Component string
@@ -10,7 +12,13 @@ type mqEventLog struct {
 }
 
 type eventLog struct {
-	MqEventLog   mqEventLog
-	Synchronized bool
-	CreatedAt    int64
+	Source            string
+	Component         string
+	Resource          string
+	Crit              int
+	Message           string
+	Timestamp         int32
+	CompositeGroupKey string
+	Synchronized      bool
+	CreatedAt         int64
 }
